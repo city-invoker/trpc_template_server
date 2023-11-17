@@ -18,20 +18,20 @@
 
 #include "trpc/common/trpc_app.h"
 
-#include "examples/helloworld/greeter_service.h"
+#include "trpc_template_service.h"
 
-namespace ssz {
+namespace trpc {
 
-class SszWeiXinOpenServer : public ::trpc::TrpcApp {
+class TrpcTemplateServer : public ::trpc::TrpcApp {
  public:
   int Initialize() override {
     const auto& config = ::trpc::TrpcConfig::GetInstance()->GetServerConfig();
     // Set the service name, which must be the same as the value of the `/server/service/name` configuration item
     // in the configuration file, otherwise the framework cannot receive requests normally.
-    std::string service_name = fmt::format("{}.{}.{}.{}", "trpc", config.app, config.server, "Greeter");
+    std::string service_name = fmt::format("{}.{}.{}.{}", "trpc", config.app, config.server, "TrpcTemplateService");
     TRPC_FMT_INFO("service name:{}", service_name);
 
-    RegisterService(service_name, std::make_shared<GreeterServiceImpl>());
+    RegisterService(service_name, std::make_shared<TrpcTemplateServiceServiceImpl>());
 
     return 0;
   }
@@ -40,10 +40,10 @@ class SszWeiXinOpenServer : public ::trpc::TrpcApp {
 
 };
 
-}  // ssz
+}  // trpc 
 
 int main(int argc, char** argv) {
-  ssz::SszWeiXinOpenServer server;
+  trpc::TrpcTemplateServer server;
   server.Main(argc, argv);
   server.Wait();
 
