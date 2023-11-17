@@ -11,8 +11,8 @@ global:
       #   io_thread_num: 8              # io and handle logic are in the same thread
 
 server:
-  app: ssz
-  server: ssz_weixin_open_server
+  app: trpc
+  server: trpc_template_server
   admin_port: 8086                     # Start server with admin service which can manage service
   admin_ip: 0.0.0.0
   service:
