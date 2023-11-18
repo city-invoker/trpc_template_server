@@ -1,15 +1,4 @@
-//
-//
-// Tencent is pleased to support the open source community by making tRPC available.
-//
-// Copyright (C) 2023 THL A29 Limited, a Tencent company.
-// All rights reserved.
-//
-// If you have downloaded a copy of the tRPC source code from Tencent,
-// please note that tRPC source code is licensed under the  Apache 2.0 License,
-// A copy of the Apache 2.0 License is included in this file.
-//
-//
+// copyright skylanwei 2023-11-18
 
 #include "trpc_template_service.h"
 
@@ -24,6 +13,15 @@ namespace sample {
 ::trpc::Status TrpcTemplateServiceImpl::TrpcTemplateHandler(::trpc::ServerContextPtr context,
                              const ::trpc::sample::TrpcTemplateReq* req,
                              ::trpc::sample::TrpcTemplateRsp* rsp) {
+
+  TRPC_FMT_INFO("process start");
+  TRPC_FMT_DEBUG("test debug log info");
+  TRPC_FMT_ERROR("error, something goes wrong");
+  rsp->set_uuid("085815c18507a3eec90559d63042298a");
+  rsp->set_spid("e90d02d68103c2d966751ed7d45e1015e3d8de5d");
+  rsp->set_msg("the devil is inside the detail");
+    
+  TRPC_FMT_INFO("process end");
   return ::trpc::kSuccStatus;
 }
 

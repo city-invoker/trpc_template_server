@@ -1,23 +1,8 @@
-//
-//
-// Tencent is pleased to support the open source community by making tRPC available.
-//
-// Copyright (C) 2023 THL A29 Limited, a Tencent company.
-// All rights reserved.
-//
-// If you have downloaded a copy of the tRPC source code from Tencent,
-// please note that tRPC source code is licensed under the  Apache 2.0 License,
-// A copy of the Apache 2.0 License is included in this file.
-//
-// Copyright 2023-11-08 skylanwei 
+// copyright skylanwei 2023-11-18
 
-#include <memory>
 #include <string>
 
-#include "fmt/format.h"
-
 #include "trpc/common/trpc_app.h"
-
 #include "trpc_template_service.h"
 
 namespace trpc {
@@ -31,7 +16,6 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     // in the configuration file, otherwise the framework cannot receive requests normally.
     std::string service_name = fmt::format("{}.{}.{}.{}", "trpc", config.app, config.server, "TrpcTemplateServiceImpl");
     TRPC_FMT_INFO("service name:{}", service_name);
-
     RegisterService(service_name, std::make_shared<TrpcTemplateServiceImpl>());
 
     return 0;
