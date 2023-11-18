@@ -19,15 +19,13 @@
 #include "trpc/log/trpc_log.h"
 
 namespace trpc {
+namespace sample {
 
 ::trpc::Status TrpcTemplateServiceImpl::TrpcTemplateHandler(::trpc::ServerContextPtr context,
-    const ::trpc::TrpcTemplateReq* req, ::trpc::TrpcTemplateRsp* rsp) {
-  TRPC_FMT_INFO("start handler");                               
-  TRPC_FMT_INFO("end handler");                               
-
+                             const ::trpc::sample::TrpcTemplateReq* req,
+                             ::trpc::sample::TrpcTemplateRsp* rsp) {
   return ::trpc::kSuccStatus;
-
 }
 
-
+}  // sample 
 }  // trpc 

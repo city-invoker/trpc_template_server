@@ -11,19 +11,22 @@
 //
 //
 
-#ifndef TRPC_TEMPLATE_SERVICE_H_
-#define TRPC_TEMPLATE_SERVICE_H_
+#ifndef TRPC_SAMPLE_SERVICE_H_
+#define TRPC_SAMPLE_SERVICE_H_
 
-#include "ptoros/trpc_template_server.trpc.pb.h"
+#include "protos/trpc_template_server.trpc.pb.h"
 
 namespace trpc {
+namespace sample {
 
-class TrpcTemplateServiceImpl : public ::trpc::TrpcTemplateService {
+class TrpcTemplateServiceImpl : public ::trpc::sample::TrpcTemplateService {
  public:
   ::trpc::Status TrpcTemplateHandler(::trpc::ServerContextPtr context,
-                               const ::trpc::TrpcTemplateReq* req,
-                               ::trpc::TrpcTemplateRsp* rsp) override;
+                               const ::trpc::sample::TrpcTemplateReq* req,
+                               ::trpc::sample::TrpcTemplateRsp* rsp) override;
 };
 
-}  // namespace trpc
-#endif // TRPC_TEMPLATE_SERVICE_H_
+} // namespace sample
+} // namespace trpc
+
+#endif // TRPC_SAMPLE_SERVICE_H_

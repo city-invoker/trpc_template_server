@@ -1,29 +1,29 @@
-
-
-
-
+# copyright 2023-11-18 skylanwei
 
 cmake_minimum_required(VERSION 3.8)
-project(ssz_weixin_open_server C CXX)
+project(trpc_template_server C CXX)
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE DEBUG)
 
-
-# 设置tRPC-Cpp的安装位置
+# include *.h
 set(TRPC_INSTALL_PATH /usr/local/trpc-cpp/trpc)
-
-# 加载tRPC-Cpp头文件及库路径
 include(${TRPC_INSTALL_PATH}/cmake/config/trpc_config.cmake)
 include_directories(${INCLUDE_INSTALL_PATHS})
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/protos")
+# lib directories
 link_directories(${LIBRARY_INSTALL_PATHS})
 
-# 设置proto文件桩代码生成工具的路径 - 具体使用方式见相关章节
-include(${TRPC_INSTALL_PATH}/cmake/tools/trpc_utils.cmake)
-set(PB_PROTOC ${TRPC_INSTALL_PATH}/bin/protoc)
-set(TRPC_CPP_PLUGIN ${TRPC_INSTALL_PATH}/bin/trpc_cpp_plugin)
+# target *.cc
+set(TARGET trpc_template_server)
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}" SRCS)
+aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/protos/" PB_SRCS)
+add_executable(${TARGET} ${PB_SRCS} ${SRCS})
 
-# 添加trpc库及其依赖的三方
+# linking
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin/")
 set(LIBRARY trpc ${LIBS_BASIC})
+target_link_libraries(${TARGET} ${LIBRARY})
 
-# 在您的构建目标里link trpc库
-target_link_libraries(your_cmake_target trpc)
 
