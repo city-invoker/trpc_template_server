@@ -26,17 +26,6 @@ global:
         io_thread_task_queue_size: 65536                          #io线程任务队列的大小，数值必须是2的幂；如果不填或者填0，会兼容为65536；如果填的数值不是2的幂，框架会做兼容，此时队列大小比用户设置的要大。
         handle_thread_num: 4                                      #handle线程个数，对于merge模式不生效；separate模式，必填。如不填，为随机大于0的数，所以建议填写。如填0，会兼容为1；
         handle_thread_task_queue_size: 65536                      #handle线程任务队列的大小，对于merge模式不生效。数值必须是2的幂；如果不填或者填0，会兼容为65536；如果填的数值不是2的幂，框架会做兼容，此时队列大小比用户设置的要大。
-        scheduling:
-          scheduling_name: default_scheduling                     #业务逻辑线程调度器名称
-          local_queue_size: 1024                                  #每个handle线程的私有任务队列大小
-          max_timer_size: 1024                                    #每个handle线程最大定时器个数
-        io_cpu_affinitys: "0-1"                                   #将io线程绑定到核0和1上
-        handle_cpu_affinitys: "2-8"                               #将 handle 线程绑定到核2-8这6个核上，仅在分离模式生效
-        disallow_cpu_migration: false                             #是否严格绑核，true：表示每个线程只绑定到一个核上，此时配置的核酸必须大于或者等于相应的线程数；false：每一个线程可以绑定到多个核上
-
-        enable_async_io: false                                    #是否使用async_io
-        io_uring_entries: 1024                                    #io_uring queue大小
-        io_uring_flags: 0                                         #io_uring标识
 
 #服务端配置
 server:                                                             
@@ -84,13 +73,14 @@ plugins:
       - name: default
         min_level: 1
         mode: 1
-        format: "|%Y-%m-%d %T.%e|%P|%t|%l|%@|"
+        format: "|%Y-%m-%d %T.%e|%P|%t|%l|%s:%#|%v"
         sinks:
           local_file:
             roll_type: by_size
             eol: true
             filename: logs/trpc_template_server_app.log 
-            roll_size: 20000
+            format: "|%Y-%m-%d %T.%e|%P|%t|%l|%s:%#|%v"
+            roll_size: 25600
             reserve_count: 10
             rotation_hour: 0
             rotation_minute: 0

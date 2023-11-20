@@ -14,7 +14,7 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     const auto& config = ::trpc::TrpcConfig::GetInstance()->GetServerConfig();
     // Set the service name, which must be the same as the value of the `/server/service/name` configuration item
     // in the configuration file, otherwise the framework cannot receive requests normally.
-    std::string service_name = fmt::format("{}.{}.{}.{}", "trpc", config.app, config.server, "TrpcTemplateServiceImpl");
+    std::string service_name = fmt::format("{}.{}.{}.{}", "trpc", config.app, config.server, "TrpcTemplateService");
     TRPC_FMT_INFO("service name:{}", service_name);
     RegisterService(service_name, std::make_shared<TrpcTemplateServiceImpl>());
 
