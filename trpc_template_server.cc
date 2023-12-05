@@ -21,6 +21,12 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     return 0;
   }
 
+  int RegisterPlugins() override {
+    // Initializes the OpenTelemetry plugin and filters in RegisterPlugins
+    ::trpc::opentelemetry::Init();
+    return 0;
+  }
+
   void Destroy() override {}
 
 };

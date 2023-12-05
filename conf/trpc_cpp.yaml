@@ -73,13 +73,13 @@ plugins:
       - name: default
         min_level: 1
         mode: 1
-        format: "|%Y-%m-%d %T.%e|%P|%t|%l|%s:%#|%v"
+        format: "|%Y-%m-%d %T.%e|%P|%t|%l|%q|%s:%#|%v"
         sinks:
           local_file:
             roll_type: by_size
             eol: true
             filename: logs/trpc_template_server_app.log 
-            format: "|%Y-%m-%d %T.%e|%P|%t|%l|%s:%#|%v"
+            format: "|%Y-%m-%d %T.%e|%P|%t|%l|%q|%s:%#|%v"
             roll_size: 25600
             reserve_count: 10
             rotation_hour: 0

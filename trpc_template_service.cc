@@ -17,10 +17,13 @@ namespace sample {
   TRPC_FMT_INFO("process start");
   TRPC_FMT_DEBUG("test debug log info");
   TRPC_FMT_ERROR("error, something goes wrong");
+
   rsp->set_uuid("085815c18507a3eec90559d63042298a");
   rsp->set_spid("e90d02d68103c2d966751ed7d45e1015e3d8de5d");
   rsp->set_msg("the devil is inside the detail");
     
+  std::string x = "asdfsksfjsa";
+  TRPC_FMT_INFO("%s", x.c_str());
   TRPC_FMT_INFO("process end");
   return ::trpc::kSuccStatus;
 }
