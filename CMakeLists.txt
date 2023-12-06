@@ -55,7 +55,13 @@ include(${TRPC_ROOT_PATH}/cmake/tools/trpc_utils.cmake)
 
 # target *.cc
 set(TARGET trpc_template_server)
-file(GLOB_RECURSE SRC_FILES ./*.cc ./protos/*.cc ./common/*.cc)
+file(GLOB_RECURSE SRC_FILES . *.cc *.cpp *.hpp)
+file(GLOB_RECURSE TEST_FILES . *test.cc *test.cpp *testing.cc)
+list(REMOVE_ITEM SRC_FILES ${TEST_FILES})
+
+list(REMOVE_DUPLICATES ${CMAKE_CXX_FLAGS})
+list(SORT ${CMAKE_CXX_FLAGS})
+
 add_executable(${TARGET} ${SRC_FILES})
 target_include_directories(${TARGET} PUBLIC ${INCLUDE_PATHS})
 
