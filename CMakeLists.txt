@@ -7,8 +7,6 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE DEBUG)
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
 include(FetchContent)
 set(TRPC_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/framework/trpc-cpp/)
 set(TRPC_CPP_GIT_URL https://github.com/city-invoker/trpc-cpp.git)
@@ -20,13 +18,14 @@ FetchContent_Declare(
     SOURCE_DIR            ${TRPC_ROOT_PATH}
 )
 
+set(OPTL_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/plugins/cpp-telemetry-opentelemetry/)
 set(OPTL_GIT_URL https://github.com/city-invoker/cpp-telemetry-opentelemetry.git)
 set(OPTL_GIT_TAG v1.0.0)
 FetchContent_Declare(
     cpp-telemetry-opentelemetry
     GIT_REPOSITORY        ${OPTL_GIT_URL}
     GIT_TAG               ${OPTL_GIT_TAG}
-    SOURCE_DIR            ${CMAKE_CURRENT_SOURCE_DIR}/plugin/cpp-telemetry-opentelemetry/
+    SOURCE_DIR            ${OPTL_ROOT_PATH} 
 )
 
 set(PROTOS_GIT_URL https://github.com/city-invoker/protos.git)
@@ -47,21 +46,43 @@ FetchContent_Declare(
     SOURCE_DIR            ${CMAKE_CURRENT_SOURCE_DIR}/common/
 )
 
-message("fetch content trpc-cpp cpp-telemetry-opentelemetry protos common from git....")
-FetchContent_MakeAvailable(trpc-cpp cpp-telemetry-opentelemetry protos common)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-error=maybe-uninitialized")
+
+if (NOT trpc-cpp_POPULATED)
+  message("fetch content and make available trpc-cpp from git...")
+  FetchContent_MakeAvailable(trpc-cpp)
+endif()
+
+if (NOT cpp-telemetry-opentelemetry_POPULATED)
+  message("fetch content and make available cpp-telemetry-opentelemetry from git...")
+  FetchContent_MakeAvailable(cpp-telemetry-opentelemetry)
+endif()
+
+if (NOT protos_POPULATED)
+  message("fetch content and make available protos from git...")
+  FetchContent_MakeAvailable(protos)
+endif()
+
+if (NOT common_POPULATED)
+  message("fetch content and make available common from git...")
+  FetchContent_MakeAvailable(common)
+endif()
+
 
 include(${TRPC_ROOT_PATH}/cmake/config/trpc_config.cmake)
 include(${TRPC_ROOT_PATH}/cmake/tools/trpc_utils.cmake)
 
 # target *.cc
 set(TARGET trpc_template_server)
-file(GLOB_RECURSE SRC_FILES . *.cc *.cpp *.hpp)
-file(GLOB_RECURSE TEST_FILES . *test.cc *test.cpp *testing.cc)
+file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/common/*.cc
+                            ${CMAKE_CURRENT_SOURCE_DIR}/protos/*.cc
+                            ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc
+                            )
+file(GLOB_RECURSE TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/common/*test.cc
+                             ${CMAKE_CURRENT_SOURCE_DIR}/protos/*test.cc
+                             ${CMAKE_CURRENT_SOURCE_DIR}/src/*test.cc
+                             )
 list(REMOVE_ITEM SRC_FILES ${TEST_FILES})
-
-list(REMOVE_DUPLICATES ${CMAKE_CXX_FLAGS})
-list(SORT ${CMAKE_CXX_FLAGS})
-
 add_executable(${TARGET} ${SRC_FILES})
 target_include_directories(${TARGET} PUBLIC ${INCLUDE_PATHS})
 
