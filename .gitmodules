@@ -1,9 +1,0 @@
-[submodule "protos"]
-	path = protos
-	url = https://github.com/city-invoker/protos.git
-[submodule "common"]
-	path = common
-	url = https://github.com/city-invoker/common.git
-[submodule "src/common"]
-	path = src/common
-	url = https://github.com/city-invoker/common.git

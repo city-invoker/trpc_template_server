@@ -7,17 +7,16 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE DEBUG)
 
-include(FetchContent)
+## include *.h
+#set(TRPC_INSTALL_PATH /usr/local/trpc-cpp/trpc)
+#include(${TRPC_INSTALL_PATH}/cmake/config/trpc_config.cmake)
+#include_directories(${INCLUDE_INSTALL_PATHS})
+#include_directories("${CMAKE_CURRENT_SOURCE_DIR}/protos/")
+#include_directories("${CMAKE_CURRENT_SOURCE_DIR}/common/include/")
 
-# include *.h
-set(TRPC_INSTALL_PATH /usr/local/trpc-cpp/trpc)
-include(${TRPC_INSTALL_PATH}/cmake/config/trpc_config.cmake)
-include_directories(${INCLUDE_INSTALL_PATHS})
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/protos")
-
-# lib directories
-link_directories(${LIBRARY_INSTALL_PATHS})
-link_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/")
+## lib directories
+#link_directories(${LIBRARY_INSTALL_PATHS})
+#link_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/")
 
 # target *.cc
 set(TARGET trpc_template_server)
