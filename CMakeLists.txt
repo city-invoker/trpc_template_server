@@ -52,34 +52,24 @@ FetchContent_MakeAvailable(trpc-cpp cpp-telemetry-opentelemetry protos common)
 
 include(${TRPC_ROOT_PATH}/cmake/config/trpc_config.cmake)
 include(${TRPC_ROOT_PATH}/cmake/tools/trpc_utils.cmake)
-#set(TARGET_INCLUDE_PATHS ${TARGET_INCLUDE_PATHS} ${INCLUDE_PATHS})
-#message("wtf is include paths:${TARGET_INCLUDE_PATHS}")
-#message("wtf is include paths:${INCLUDE_PATHS}")
 
 # target *.cc
 set(TARGET trpc_template_server)
-#aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}" SRCS)
-#aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/common/" COMMON_SRCS)
-#aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/protos/" PB_SRCS)
-
 file(GLOB_RECURSE SRC_FILES ./*.cc ./protos/*.cc ./common/*.cc)
 add_executable(${TARGET} ${SRC_FILES})
-
 target_include_directories(${TARGET} PUBLIC ${INCLUDE_PATHS})
+
 ## linking
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/")
 set(TARGET_LINK_PATHS ${TARGET_LINK_PATHS} ${LIBRARY_PATHS})
 target_link_directories(${TARGET} PUBLIC ${TARGET_LINK_PATHS})
 
-message("wtf is the link paths:${TARGET_LINK_PATHS}")
 set(TARGET_LINK_LIBS ${TARGET_LINK_LIBS}
   trpc
   trpc_cpp_plugin_telemetry_opentelemetry 
   trpc_opentelemetry_proto
-  ${LIBS_BASIC}
   ${LIB_METRICS_PROMETHEUS})
 
-message("wtf is link libs : ${TARGET_LINK_LIBS}")
 target_link_libraries(${TARGET} ${TARGET_LINK_LIBS})
 
 
