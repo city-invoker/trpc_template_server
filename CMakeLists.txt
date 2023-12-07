@@ -77,6 +77,8 @@ set(TARGET trpc_template_server)
 file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/common/*.cc
                             ${CMAKE_CURRENT_SOURCE_DIR}/protos/*.cc
                             ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc
+                            ${CMAKE_CURRENT_SOURCE_DIR}/trpc_template_server.cc
+                            ${CMAKE_CURRENT_SOURCE_DIR}/trpc_template_service.cc
                             )
 file(GLOB_RECURSE TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/common/*test.cc
                              ${CMAKE_CURRENT_SOURCE_DIR}/protos/*test.cc
@@ -95,7 +97,7 @@ set(TARGET_LINK_LIBS ${TARGET_LINK_LIBS}
   trpc
   trpc_cpp_plugin_telemetry_opentelemetry 
   trpc_opentelemetry_proto
-  ${LIB_METRICS_PROMETHEUS})
+  )
 
 target_link_libraries(${TARGET} ${TARGET_LINK_LIBS})
 

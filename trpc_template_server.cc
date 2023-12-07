@@ -33,7 +33,7 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     //add spd custom flag
     Log* t = ::trpc::LogFactory::GetInstance()->Get().Get();
     DefaultLog* dpt = dynamic_cast<DefaultLog*>(t);
-    dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("q");
+    dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("default", 'q');
 
     ::trpc::opentelemetry::Init();
     return 0;
