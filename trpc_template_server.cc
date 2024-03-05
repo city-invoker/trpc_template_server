@@ -35,7 +35,8 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     DefaultLog* dpt = dynamic_cast<DefaultLog*>(t);
     dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("default", 'q');
 
-    ::trpc::opentelemetry::Init();
+    //TODO add optl config
+    //::trpc::opentelemetry::Init();
     return 0;
   }
 

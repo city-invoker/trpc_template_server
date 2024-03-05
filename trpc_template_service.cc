@@ -28,5 +28,20 @@ namespace sample {
   return ::trpc::kSuccStatus;
 }
 
+::trpc::Status TrpcTemplateServiceImpl::TrpcQueryUserHandler(::trpc::ServerContextPtr context,
+                             const ::trpc::sample::TrpcQueryUserReq* req,
+                             ::trpc::sample::TrpcQueryUserRsp* rsp) {
+
+  TRPC_FMT_INFO("process start");
+  TRPC_FMT_DEBUG("test debug log info");
+  TRPC_FMT_ERROR("error, something goes wrong");
+
+  rsp->set_uid("085815c18507a3eec90559d63042298a");
+  rsp->set_seesion_id("e90d02d68103c2d966751ed7d45e1015e3d8de5d");
+  rsp->set_msg("the devil is inside the detail");
+    
+  TRPC_FMT_INFO("process end");
+  return ::trpc::kSuccStatus;
+}
 }  // sample 
 }  // trpc 

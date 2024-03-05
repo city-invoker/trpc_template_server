@@ -13,6 +13,11 @@ class TrpcTemplateServiceImpl : public ::trpc::sample::TrpcTemplateService {
   ::trpc::Status TrpcTemplateHandler(::trpc::ServerContextPtr context,
                                const ::trpc::sample::TrpcTemplateReq* req,
                                ::trpc::sample::TrpcTemplateRsp* rsp) override;
+
+  ::trpc::Status TrpcQueryUserHandler(::trpc::ServerContextPtr context,
+                               const ::trpc::sample::TrpcQueryUserReq* req,
+                               ::trpc::sample::TrpcQueryUserRsp* rsp) override;
+
 };
 
 } // namespace sample
