@@ -41,7 +41,8 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/")
 find_library(LIBPROTO libtrpc_proto.a "${CMAKE_CURRENT_SOURCE_DIR}/../protos/lib/")
 set(TARGET_LINK_PATHS ${TARGET_LINK_PATHS} "${TRPC_INSTALL_PATH}/lib")
 target_link_directories(${TARGET} PUBLIC ${TARGET_LINK_PATHS})
-set(TARGET_LINK_LIBS ${LIBS_BASIC} trpc ${LIBPROTO})
+set(TARGET_LINK_LIBS trpc ${TARGET_LINK_LIBS} ${LIBS_BASIC} ${LIBPROTO})
 
+message("link libs: ${TARGET_LINK_LIBS}")
 target_link_libraries(${TARGET} ${TARGET_LINK_LIBS})
 
