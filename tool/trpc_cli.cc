@@ -33,16 +33,95 @@ using namespace trpc::sample;
 using namespace trpc::testing;
 //using namespace std;
 
-trpc::ProtocolPtr pack() {
-  trpc::TrpcClientCodec* tcc_ptr = new trpc::TrpcClientCodec();
-  trpc::ProtocolPtr req_protocol = tcc_ptr->CreateRequestPtr();
-  trpc::ClientContextPtr context = MakeRefCounted<ClientContext>();
-  context->SetRequest(req_protocol);
-  //context->SetReqCompressType(compressor::kZlib);
-  trpc::sample::TrpcQueryUserReq query_user_req;
-  query_user_req.set_uid("skylanwei");
-  tcc_ptr->FillRequest(context, req_protocol, &query_user_req);
-  return req_protocol;
+//bool PackTrpcRequest(const DummyTrpcProtocol& protocol, void* in, NoncontiguousBuffer& bin_data) {
+//  serialization::SerializationType serialization_type = protocol.content_type;
+//  serialization::SerializationFactory* serializationfactory = serialization::SerializationFactory::GetInstance();
+//
+//  std::cout << "pack trpc request" << std::endl;
+//  NoncontiguousBuffer body;
+//  bool encode_ret = serializationfactory->Get(serialization_type)->Serialize(protocol.data_type, in, &body);
+//  if (!encode_ret) {
+//    return false;
+//  }
+//
+//  std::cout << "pack trpc request ok" << std::endl;
+//
+//  TrpcRequestProtocol req;
+//
+//  req.req_header.set_version(0);
+//  req.req_header.set_call_type(protocol.call_type);
+//  req.req_header.set_request_id(protocol.request_id);
+//  req.req_header.set_timeout(protocol.timeout);
+//  req.req_header.set_caller(protocol.caller);
+//  req.req_header.set_callee(protocol.callee);
+//  req.req_header.set_func(protocol.func);
+//  req.req_header.set_message_type(protocol.message_type);
+//  req.req_header.set_content_type(protocol.content_type);
+//  req.req_header.set_content_encoding(protocol.content_encoding);
+//
+//  auto req_trans_info = req.req_header.mutable_trans_info();
+//  (*req_trans_info)["testkey1"] = "testvalue1";
+//  (*req_trans_info)["testkey2"] = "testvalue2";
+//
+//  req.req_header.set_content_encoding(TrpcCompressType::TRPC_DEFAULT_COMPRESS);
+//
+//  req.SetNonContiguousProtocolBody(std::move(body));
+//
+//  std::cout << "pack trpc request end" << std::endl;
+//
+//  return req.ZeroCopyEncode(bin_data);
+//}
+
+
+
+
+void pack(NoncontiguousBuffer& bin_data) {
+
+  std::cout << "log1" << std::endl;
+  trpc::sample::TrpcQueryUserReq busi_req;
+  busi_req.set_uid("skylanweixasdfkkllasdfas");
+  busi_req.set_session_id("wtf is thereasdlfwwalsfjasdsja");
+
+  trpc::TrpcRequestProtocolPtr req_ptr = std::make_shared<TrpcRequestProtocol>();
+  req_ptr->req_header.set_version(0);
+  req_ptr->req_header.set_call_type(trpc::serialization::kPbMessage);
+  req_ptr->req_header.set_request_id(999);
+  req_ptr->req_header.set_timeout(5*1000);
+  req_ptr->req_header.set_caller("trpc.ssz.trpc_template_server.trpc_cli");
+  req_ptr->req_header.set_callee("trpc.ssz.trpc_template_server.TrpcTemplateService");
+  req_ptr->req_header.set_func("/trpc.sample.TrpcTemplateService/TrpcQueryUserHandler");
+  req_ptr->req_header.set_message_type(TrpcMessageType::TRPC_DEFAULT);
+  //req_ptr->req_header.set_trans_info();
+  req_ptr->req_header.set_content_type(trpc::serialization::kPbMessage);
+  req_ptr->req_header.set_content_encoding(compressor::kNone);
+  uint32_t att_size = 0;
+  req_ptr->req_header.set_attachment_size(att_size);
+
+  std::cout << "log2" << std::endl;
+
+  trpc::serialization::SerializationType serialization_type = req_ptr->req_header.content_type();
+  trpc::serialization::SerializationFactory* serialization_factory = trpc::serialization::SerializationFactory::GetInstance();
+
+  NoncontiguousBuffer body;
+  bool encode_ret = serialization_factory->Get(serialization_type)->Serialize(trpc::serialization::kPbMessage, static_cast<void *>(&busi_req), &body);
+  req_ptr->SetNonContiguousProtocolBody(std::move(body));
+  req_ptr->ZeroCopyEncode(bin_data);
+
+  std::cout << "logx:=" << bin_data.ByteSize() << std::endl;
+  return;
+}
+
+std::string FlattenSlowX(const NoncontiguousBuffer& nb) {
+  std::size_t max_bytes = nb.ByteSize();
+  std::string rc;
+  std::size_t left = max_bytes;
+  rc.reserve(max_bytes);
+  for (auto iter = nb.begin(); iter != nb.end() && left; ++iter) {
+    auto len = std::min(left, iter->size());
+    rc.append(iter->data(), len);
+    left -= len;
+  }
+  return rc;
 }
 
 // Function to send protocol buffer message to server and receive response
@@ -73,38 +152,22 @@ std::string send_message_to_server(const std::string& host, int port, const goog
         close(sockfd);
         return "";
     }
-    //trpc::ProtocolPtr ptr = pack();
-    trpc::TrpcClientCodec* tcc_ptr = new trpc::TrpcClientCodec();
-    trpc::ProtocolPtr ptr = tcc_ptr->CreateRequestPtr();
 
-    trpc::ClientContextPtr context = MakeRefCounted<ClientContext>();
-    context->SetRequest(ptr);
-    context->SetCallType(trpc::serialization::kPbMessage);
-    context->SetRequestId(1022);
-    context->SetTimeout(5*1000);
-    context->SetCallerName("trpc_cli");
-    context->SetCalleeName("trpc_server");
-    context->SetFuncName("/trpc.sample.TrpcTemplateService/TrpcQueryUserHandler");
-    //context->SetMessageType(TrpcMessageType::TRPC_DEFAULT);
-    context->SetReqEncodeType(trpc::serialization::kPbMessage);
-    context->SetReqCompressType(compressor::kZlib);
+    //size_t bsize = 100;
+    //char* sbuf = new char[bsize];
+    
+    NoncontiguousBuffer bin_data;
+    pack(bin_data);
 
-    trpc::sample::TrpcQueryUserReq query_user_req;
-    query_user_req.set_uid("skylanweixasdfkkllasdfas");
-    query_user_req.set_session_id("wtf is thereasdlfwwalsfjasdsja");
+    std::cout << "logt:=" << bin_data.ByteSize() << std::endl;
+    char* sbuf = new char[bin_data.ByteSize()];
 
-    tcc_ptr->FillRequest(context, ptr, &query_user_req);
-
-    trpc::NoncontiguousBuffer req_bin_data;
-    tcc_ptr->ZeroCopyEncode(context, ptr, req_bin_data);
-
-    std::cout << "track" << req_bin_data.ByteSize() << std::endl;
-    std::size_t bsize = req_bin_data.ByteSize();
-    std::cout << "track" << bsize << std::endl;
-    char* sbuf = new char[bsize];
-    trpc::detail::FlattenToSlowSlow(req_bin_data, sbuf, bsize);
-
-    if (send(sockfd, sbuf, bsize, 0) < 0) {
+    //std::string FlattenSlow(const NoncontiguousBuffer& nb, std::size_t max_bytes = std::numeric_limits<std::size_t>::max());
+    //detail::FlattenToSlow(bin_data, sbuf, bin_data.ByteSize());
+    std::string sb = FlattenSlowX(bin_data);
+    std::cout << "logb:=" << sb << std::endl;
+    std::cout << "logb:=" << sb.size() << std::endl;
+    if (send(sockfd, sb.c_str(), sb.size(), 0) < 0) {
         std::cerr << "Error: Failed to send message" << std::endl;
         close(sockfd);
         return "";
