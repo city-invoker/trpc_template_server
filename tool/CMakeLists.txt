@@ -29,11 +29,12 @@ include(${TRPC_INSTALL_PATH}/cmake/config/trpc_config.cmake)
 include_directories("${TRPC_INSTALL_PATH}/include/")
 
 
-#file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/protos/*.cc)
 
 set(TARGET trpc_cli)
 
-add_executable(${TARGET} trpc_cli.cc)
+file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
+
+add_executable(${TARGET} ${SRC_FILES})
 target_include_directories(${TARGET} PUBLIC ${INCLUDE_PATHS})
 
 ## linking

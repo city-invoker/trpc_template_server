@@ -1,132 +1,22 @@
 #include <iostream>
-#include <fstream>
+
+//#include <fstream>
 #include <string>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <google/protobuf/message.h>
-#include <google/protobuf/util/json_util.h>
-#include <google/protobuf/dynamic_message.h>
-#include <google/protobuf/descriptor.h>
-#include "gtest/gtest.h"
+#include <fcntl.h>
 
-
+#include "pack_util.h"
 #include "../protos/trpc_template_server.pb.h"
-#include "../protos/trpc_template_server.trpc.pb.h"
-
-#include "trpc/codec/protocol.h"
-#include "trpc/codec/trpc/trpc_protocol.h"
-#include "trpc/codec/trpc/trpc_client_codec.h"
-//#include "trpc/codec/trpc/trpc_client_codec.h"
-#include "trpc/util/ref_ptr.h"
-#include "trpc/codec/trpc/testing/trpc_protocol_testing.h"
-#include "trpc/transport/server/testing/server_transport_testing.h"
-#include "trpc/server/testing/server_context_testing.h"
-#include "trpc/server/rpc/rpc_method_handler.h"
-#include "trpc/serialization/serialization_type.h"
-#include "trpc/serialization/trpc_serialization.h"
-#include "trpc/codec/codec_manager.h"
 
 using namespace trpc;
 using namespace trpc::sample;
-using namespace trpc::testing;
-//using namespace std;
-
-//bool PackTrpcRequest(const DummyTrpcProtocol& protocol, void* in, NoncontiguousBuffer& bin_data) {
-//  serialization::SerializationType serialization_type = protocol.content_type;
-//  serialization::SerializationFactory* serializationfactory = serialization::SerializationFactory::GetInstance();
-//
-//  std::cout << "pack trpc request" << std::endl;
-//  NoncontiguousBuffer body;
-//  bool encode_ret = serializationfactory->Get(serialization_type)->Serialize(protocol.data_type, in, &body);
-//  if (!encode_ret) {
-//    return false;
-//  }
-//
-//  std::cout << "pack trpc request ok" << std::endl;
-//
-//  TrpcRequestProtocol req;
-//
-//  req.req_header.set_version(0);
-//  req.req_header.set_call_type(protocol.call_type);
-//  req.req_header.set_request_id(protocol.request_id);
-//  req.req_header.set_timeout(protocol.timeout);
-//  req.req_header.set_caller(protocol.caller);
-//  req.req_header.set_callee(protocol.callee);
-//  req.req_header.set_func(protocol.func);
-//  req.req_header.set_message_type(protocol.message_type);
-//  req.req_header.set_content_type(protocol.content_type);
-//  req.req_header.set_content_encoding(protocol.content_encoding);
-//
-//  auto req_trans_info = req.req_header.mutable_trans_info();
-//  (*req_trans_info)["testkey1"] = "testvalue1";
-//  (*req_trans_info)["testkey2"] = "testvalue2";
-//
-//  req.req_header.set_content_encoding(TrpcCompressType::TRPC_DEFAULT_COMPRESS);
-//
-//  req.SetNonContiguousProtocolBody(std::move(body));
-//
-//  std::cout << "pack trpc request end" << std::endl;
-//
-//  return req.ZeroCopyEncode(bin_data);
-//}
-
-
-
-
-void pack(NoncontiguousBuffer& bin_data) {
-  trpc::sample::TrpcQueryUserReq busi_req;
-  busi_req.set_uid("skylanweixasdfkkllasdfas");
-  busi_req.set_session_id("wtf is thereasdlfwwalsfjasdsja");
-
-  trpc::TrpcRequestProtocolPtr req_ptr = std::make_shared<TrpcRequestProtocol>();
-  req_ptr->req_header.set_version(0);
-  req_ptr->req_header.set_call_type(trpc::serialization::kPbMessage);
-  req_ptr->req_header.set_request_id(999);
-  req_ptr->req_header.set_timeout(5*1000);
-  req_ptr->req_header.set_caller("trpc.ssz.trpc_template_server.trpc_cli");
-  req_ptr->req_header.set_callee("trpc.ssz.trpc_template_server.TrpcTemplateService");
-  req_ptr->req_header.set_func("/trpc.sample.TrpcTemplateService/TrpcQueryUserHandler");
-  req_ptr->req_header.set_message_type(TrpcMessageType::TRPC_DEFAULT);
-  //req_ptr->req_header.set_trans_info();
-  req_ptr->req_header.set_content_type(trpc::serialization::kPbMessage);
-  req_ptr->req_header.set_content_encoding(compressor::kNone);
-  uint32_t att_size = 0;
-  req_ptr->req_header.set_attachment_size(att_size);
-
-  trpc::serialization::SerializationType serialization_type = req_ptr->req_header.content_type();
-  trpc::serialization::SerializationFactory* serialization_factory = trpc::serialization::SerializationFactory::GetInstance();
-
-  NoncontiguousBuffer body;
-  bool encode_ret = serialization_factory->Get(serialization_type)->Serialize(trpc::serialization::kPbMessage, static_cast<void *>(&busi_req), &body);
-  req_ptr->SetNonContiguousProtocolBody(std::move(body));
-  req_ptr->ZeroCopyEncode(bin_data);
-  return;
-}
-
-std::string FlattenToString(const NoncontiguousBuffer& nb) {
-  std::size_t max_bytes = nb.ByteSize();
-  std::string rc;
-  std::size_t left = max_bytes;
-  rc.reserve(max_bytes);
-  for (auto iter = nb.begin(); iter != nb.end() && left; ++iter) {
-    auto len = std::min(left, iter->size());
-    rc.append(iter->data(), len);
-    left -= len;
-  }
-  return rc;
-}
+using namespace trpc::tool;
 
 // Function to send protocol buffer message to server and receive response
-std::string send_message_to_server(const std::string& host, int port, const google::protobuf::Message& message) {
-    // Serialize the message
-    std::string serialized_message;
-    if (!message.SerializeToString(&serialized_message)) {
-        std::cerr << "Error: Failed to serialize message" << std::endl;
-        return "";
-    }
-
+std::string send_message_to_server(const std::string& host, int port, const std::string& send_data) {
     // Create socket
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
@@ -134,6 +24,12 @@ std::string send_message_to_server(const std::string& host, int port, const goog
         return "";
     }
 
+    //int flags = fcntl(sockfd, F_GETFL, 0);
+    //fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+    struct timeval timeout;
+    timeout.tv_sec = 5;
+    timeout.tv_usec = 0;
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
     // Server address
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
@@ -147,81 +43,49 @@ std::string send_message_to_server(const std::string& host, int port, const goog
         return "";
     }
 
-    //size_t bsize = 100;
-    //char* sbuf = new char[bsize];
-    
-    NoncontiguousBuffer bin_data;
-    pack(bin_data);
 
-    std::cout << "logt:=" << bin_data.ByteSize() << std::endl;
-    char* sbuf = new char[bin_data.ByteSize()];
-
-    //std::string FlattenSlow(const NoncontiguousBuffer& nb, std::size_t max_bytes = std::numeric_limits<std::size_t>::max());
-    //detail::FlattenToSlow(bin_data, sbuf, bin_data.ByteSize());
-    std::string sb = FlattenToString(bin_data);
-    std::cout << "logb:=" << sb << std::endl;
-    std::cout << "logb:=" << sb.size() << std::endl;
-    if (send(sockfd, sb.c_str(), sb.size(), 0) < 0) {
+    if (send(sockfd, send_data.c_str(), send_data.size(), 0) < 0) {
         std::cerr << "Error: Failed to send message" << std::endl;
         close(sockfd);
         return "";
     }
 
     // Receive response from server
-    char buffer[1024];
+    char buffer[10*1024];
     std::string response;
     ssize_t bytes_received;
-    while ((bytes_received = recv(sockfd, buffer, sizeof(buffer), 0)) > 0) {
-        response.append(buffer, bytes_received);
+    ssize_t bc = recv(sockfd, buffer, sizeof(buffer), 0);
+    if (bc > 0) {
+        response.append(buffer, bc);
     }
-    if (bytes_received < 0) {
-        std::cerr << "Error: Failed to receive response" << std::endl;
-        close(sockfd);
-        return "";
-    }
-
-    // Close socket
     close(sockfd);
-
     return response;
 }
 
-
 int main(int argc, char** argv) {
     // Parse command-line arguments
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <host> <port> <request_json_file>" << std::endl;
-        return 1;
-    }
-    codec::Init();
-    serialization::Init();
+    //if (argc != 4) {
+    //    std::cerr << "Usage: " << argv[0] << " <host> <port>" << std::endl;
+    //    return 1;
+    //}
+    //codec::Init();
+    //serialization::Init();
 
-    // Parse host and port from command line
-    std::string host = argv[1];
-    int port = std::stoi(argv[2]);
+    //// Parse host and port from command line
+    //std::string host = argv[1];
+    //int port = std::stoi(argv[2]);
 
-    // Read request JSON from file
-    std::string json_file_path = argv[3];
-    std::ifstream json_file(json_file_path);
-    if (!json_file) {
-        std::cerr << "Error: Failed to open JSON file" << std::endl;
-        return 1;
-    }
-    std::string json_string((std::istreambuf_iterator<char>(json_file)),
-                             std::istreambuf_iterator<char>());
+    std::shared_ptr<PackUtil> pu_ptr =  std::make_shared<PackUtil>();
+    trpc::sample::TrpcQueryUserReq busi_req;
+    busi_req.set_uid("bbfb00765d29233677cf0bcf503c3401");
+    busi_req.set_session_id("BiZTFiMTVhMWVjNTk1MDExYjE2M2Q3MmY2MWFlMjAxYzU3ZDQ0NjBlNDM4ZmQ4Y2M2MmY5Y2E5OWY4MGM1ZCAgLQo=");
+    std::string service("trpc.ssz.trpc_template_server.TrpcTemplateService");
+    std::string func("/trpc.sample.TrpcTemplateService/TrpcQueryUserHandler");
 
-    // Parse JSON string and create dynamic message
-    google::protobuf::DynamicMessageFactory factory;
-    const google::protobuf::Descriptor* descriptor = TrpcQueryUserReq::GetDescriptor(); /* Replace with your message descriptor */
-    std::unique_ptr<google::protobuf::Message> request(factory.GetPrototype(descriptor)->New());
-    {
-        google::protobuf::util::JsonParseOptions options;
-        options.ignore_unknown_fields = true;
-        google::protobuf::util::JsonStringToMessage(json_string, request.get(), options);
-    }
-
-    // Send protocol buffer message to server and receive response
-    std::string response = send_message_to_server(host, port, *request);
+    std::string send_data = pu_ptr->PackTrpcPb(static_cast<void *>(&busi_req), service, func);
+    std::string host("127.0.0.1");
+    uint32_t port = 8088; 
+    std::string response = send_message_to_server(host, port, send_data);
 
     // Print response
     std::cout << "Response from server:" << std::endl;

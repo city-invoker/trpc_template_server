@@ -5,16 +5,31 @@
 
 #include "trpc/util/buffer/noncontiguous_buffer.h"
 
+#include "trpc/serialization/trpc_serialization.h"
+#include "trpc/codec/codec_manager.h"
+
+
 namespace trpc {
 namespace tool {
-  class PackUtil {
-    public:
 
-      std::string PackUtil::FlattenToString(const NoncontiguousBuffer& nb) ;
-      std::string PackTrpcPb(void* busi_req);
+class PackUtil {
+  public:
 
+    PackUtil() {
+      codec::Init();
+      serialization::Init();
+    }
 
+    virtual ~PackUtil() {
+      codec::Destroy();
+      serialization::Destroy();
+    }
 
+    std::string FlattenToString(const trpc::NoncontiguousBuffer& nb) ;
+    //std::string PackTrpcPb(void* busi_req);
+    std::string PackTrpcPb(void* busi_req, const std::string& service, const std::string& func);
+
+};
 
 }
 }
