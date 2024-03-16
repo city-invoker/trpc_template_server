@@ -76,8 +76,6 @@ using namespace trpc::testing;
 
 
 void pack(NoncontiguousBuffer& bin_data) {
-
-  std::cout << "log1" << std::endl;
   trpc::sample::TrpcQueryUserReq busi_req;
   busi_req.set_uid("skylanweixasdfkkllasdfas");
   busi_req.set_session_id("wtf is thereasdlfwwalsfjasdsja");
@@ -97,8 +95,6 @@ void pack(NoncontiguousBuffer& bin_data) {
   uint32_t att_size = 0;
   req_ptr->req_header.set_attachment_size(att_size);
 
-  std::cout << "log2" << std::endl;
-
   trpc::serialization::SerializationType serialization_type = req_ptr->req_header.content_type();
   trpc::serialization::SerializationFactory* serialization_factory = trpc::serialization::SerializationFactory::GetInstance();
 
@@ -106,12 +102,10 @@ void pack(NoncontiguousBuffer& bin_data) {
   bool encode_ret = serialization_factory->Get(serialization_type)->Serialize(trpc::serialization::kPbMessage, static_cast<void *>(&busi_req), &body);
   req_ptr->SetNonContiguousProtocolBody(std::move(body));
   req_ptr->ZeroCopyEncode(bin_data);
-
-  std::cout << "logx:=" << bin_data.ByteSize() << std::endl;
   return;
 }
 
-std::string FlattenSlowX(const NoncontiguousBuffer& nb) {
+std::string FlattenToString(const NoncontiguousBuffer& nb) {
   std::size_t max_bytes = nb.ByteSize();
   std::string rc;
   std::size_t left = max_bytes;
@@ -164,7 +158,7 @@ std::string send_message_to_server(const std::string& host, int port, const goog
 
     //std::string FlattenSlow(const NoncontiguousBuffer& nb, std::size_t max_bytes = std::numeric_limits<std::size_t>::max());
     //detail::FlattenToSlow(bin_data, sbuf, bin_data.ByteSize());
-    std::string sb = FlattenSlowX(bin_data);
+    std::string sb = FlattenToString(bin_data);
     std::cout << "logb:=" << sb << std::endl;
     std::cout << "logb:=" << sb.size() << std::endl;
     if (send(sockfd, sb.c_str(), sb.size(), 0) < 0) {
