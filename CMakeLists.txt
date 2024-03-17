@@ -7,7 +7,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE DEBUG)
 
-include(FetchContent)
+#include(FetchContent)
 #set(TRPC_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/framework/trpc-cpp/)
 #set(TRPC_CPP_GIT_URL https://github.com/city-invoker/trpc-cpp.git)
 #set(TRPC_CPP_GIT_TAG v1.0.0)
@@ -28,23 +28,23 @@ include(FetchContent)
 #    SOURCE_DIR            ${OPTL_ROOT_PATH} 
 #)
 
-set(PROTOS_GIT_URL https://github.com/city-invoker/protos.git)
-set(PROTOS_GIT_TAG dev_version_1.0.0)
-FetchContent_Declare(
-    protos 
-    GIT_REPOSITORY        ${PROTOS_GIT_URL}
-    GIT_TAG               ${PROTOS_GIT_TAG}
-    SOURCE_DIR            ${CMAKE_CURRENT_SOURCE_DIR}/protos/
-)
-
-set(COMMON_GIT_URL https://github.com/city-invoker/common.git)
-set(COMMON_GIT_TAG dev_version_1.0.0)
-FetchContent_Declare(
-    common 
-    GIT_REPOSITORY        ${COMMON_GIT_URL}
-    GIT_TAG               ${COMMON_GIT_TAG}
-    SOURCE_DIR            ${CMAKE_CURRENT_SOURCE_DIR}/common/
-)
+#set(PROTOS_GIT_URL https://github.com/city-invoker/protos.git)
+#set(PROTOS_GIT_TAG dev_version_1.0.0)
+#FetchContent_Declare(
+#    protos 
+#    GIT_REPOSITORY        ${PROTOS_GIT_URL}
+#    GIT_TAG               ${PROTOS_GIT_TAG}
+#    SOURCE_DIR            ${CMAKE_CURRENT_SOURCE_DIR}/protos/
+#)
+#
+#set(COMMON_GIT_URL https://github.com/city-invoker/common.git)
+#set(COMMON_GIT_TAG dev_version_1.0.0)
+#FetchContent_Declare(
+#    common 
+#    GIT_REPOSITORY        ${COMMON_GIT_URL}
+#    GIT_TAG               ${COMMON_GIT_TAG}
+#    SOURCE_DIR            ${CMAKE_CURRENT_SOURCE_DIR}/common/
+#)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-error=maybe-uninitialized")
 
@@ -58,15 +58,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-error=maybe-unini
 #  FetchContent_MakeAvailable(cpp-telemetry-opentelemetry)
 #endif()
 
-if (NOT protos_POPULATED)
-  message("fetch content and make available protos from git...")
-  FetchContent_MakeAvailable(protos)
-endif()
-
-if (NOT common_POPULATED)
-  message("fetch content and make available common from git...")
-  FetchContent_MakeAvailable(common)
-endif()
+#if (NOT protos_POPULATED)
+#  message("fetch content and make available protos from git...")
+#  FetchContent_MakeAvailable(protos)
+#endif()
+#
+#if (NOT common_POPULATED)
+#  message("fetch content and make available common from git...")
+#  FetchContent_MakeAvailable(common)
+#endif()
 
 set(TRPC_INSTALL_PATH "/usr/local/trpc-cpp/trpc")
 set(TRPC_INCLUDE_PATHS "${TRPC_INSTALL_PATH}/include/")
