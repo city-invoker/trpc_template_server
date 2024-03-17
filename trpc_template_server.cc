@@ -25,14 +25,17 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     TRPC_FMT_INFO("service name:{}", service_name);
     RegisterService(service_name, std::make_shared<TrpcTemplateServiceImpl>());
 
-    LogPtr t = ::trpc::LogFactory::GetInstance()->Get();
-    DefaultLog* dpt = dynamic_cast<DefaultLog*>(t.Get());
-    dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("default", "local_file", 'q');
 
     return 0;
   }
 
   int RegisterPlugins() override {
+
+    LogPtr t = ::trpc::LogFactory::GetInstance()->Get();
+    DefaultLog* dpt = dynamic_cast<DefaultLog*>(t.Get());
+    dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("default", "local_file", 'q');
+
+
     // Initializes the OpenTelemetry plugin and filters in RegisterPlugins
     //add spd custom flag
     //TODO add optl config
