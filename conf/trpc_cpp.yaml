@@ -80,7 +80,7 @@ plugins:
             eol: true
             filename: logs/trpc_template_server_app.log 
             format: "|%Y-%m-%d %T.%e|%-5!l|%P|%t|%q|%s:%#|%v"
-            roll_size: 25600
+            roll_size: 268435456 
             reserve_count: 10
             rotation_hour: 0
             rotation_minute: 0

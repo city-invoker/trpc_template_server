@@ -8,7 +8,7 @@
 #include "trpc/util/log/default/sinks/local_file/local_file_sink.h"
 #include "trpc/common/config/local_file_sink_conf.h"
 #include "common/trace_id_formatter.h"
-#include "common/include/opentelemetry_telemetry_api.h"
+//#include "common/include/opentelemetry_telemetry_api.h"
 
 
 namespace trpc {
@@ -25,16 +25,18 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     TRPC_FMT_INFO("service name:{}", service_name);
     RegisterService(service_name, std::make_shared<TrpcTemplateServiceImpl>());
 
+    Log* t = ::trpc::LogFactory::GetInstance()->Get().Get();
+    DefaultLog* dpt = dynamic_cast<DefaultLog*>(t);
+    dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("default", "local_file", 'q');
+
+
+
     return 0;
   }
 
   int RegisterPlugins() override {
     // Initializes the OpenTelemetry plugin and filters in RegisterPlugins
     //add spd custom flag
-    Log* t = ::trpc::LogFactory::GetInstance()->Get().Get();
-    DefaultLog* dpt = dynamic_cast<DefaultLog*>(t);
-    dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("default", 'q');
-
     //TODO add optl config
     //::trpc::opentelemetry::Init();
     return 0;
