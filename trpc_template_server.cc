@@ -25,11 +25,9 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     TRPC_FMT_INFO("service name:{}", service_name);
     RegisterService(service_name, std::make_shared<TrpcTemplateServiceImpl>());
 
-    Log* t = ::trpc::LogFactory::GetInstance()->Get().Get();
-    DefaultLog* dpt = dynamic_cast<DefaultLog*>(t);
+    LogPtr t = ::trpc::LogFactory::GetInstance()->Get();
+    DefaultLog* dpt = dynamic_cast<DefaultLog*>(t.Get());
     dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("default", "local_file", 'q');
-
-
 
     return 0;
   }
