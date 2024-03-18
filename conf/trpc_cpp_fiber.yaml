@@ -99,9 +99,9 @@ plugins:
     local_file:
       providers:
       - name: app_busi_conf
-        filename: conf/app_busi_conf.yaml
+        filename: ../conf/app_busi_conf.yaml
       - name: app_db_conf
-        filename: conf/app_db_conf.yaml
+        filename: ../conf/app_db_conf.yaml
 
 
 

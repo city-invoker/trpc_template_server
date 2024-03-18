@@ -14,11 +14,11 @@ class TrpcTemplateServiceImpl : public ::trpc::sample::TrpcTemplateService {
 public:
 
   TrpcTemplateServiceImpl() {
-    trpc::config::Init(); 
-    app_busi_conf = trpc::config::Load("conf/app_busi_conf.yaml", 
+
+    app_busi_conf = trpc::config::Load("../conf/app_busi_conf.yaml", 
                         trpc::config::WithCodec("yaml"),
                         trpc::config::WithProvider("app_busi_conf"));
-    app_db_conf = trpc::config::Load("conf/app_db_conf.yaml", 
+    app_db_conf = trpc::config::Load("../conf/app_db_conf.yaml", 
                         trpc::config::WithCodec("yaml"),
                         trpc::config::WithProvider("app_db_conf"));
   }

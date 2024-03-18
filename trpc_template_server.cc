@@ -7,8 +7,8 @@
 #include "trpc/util/log/default/default_log.h"
 #include "trpc/util/log/default/sinks/local_file/local_file_sink.h"
 #include "trpc/common/config/local_file_sink_conf.h"
+#include "trpc/config/trpc_conf.h"
 #include "common/trace_id_formatter.h"
-//#include "common/include/opentelemetry_telemetry_api.h"
 
 
 namespace trpc {
@@ -35,7 +35,7 @@ class TrpcTemplateServer : public ::trpc::TrpcApp {
     DefaultLog* dpt = dynamic_cast<DefaultLog*>(t.Get());
     dpt->SetCustomFlag<LocalFileSink, LocalFileSinkConfig, TraceIdFormatter>("default", "local_file", 'q');
 
-
+    trpc::config::Init(); 
     // Initializes the OpenTelemetry plugin and filters in RegisterPlugins
     //add spd custom flag
     //TODO add optl config
