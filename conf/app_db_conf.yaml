@@ -1,0 +1,13 @@
+config:
+  master:
+    host: 127.0.0.1
+    port: 3306
+    user: db_rw_busi_1
+    password: 123456
+    credential: conf/secret.volume
+  slave:
+    host: 127.0.0.2
+    port: 3306
+    user: db_ro_busi_1
+    password: 123456
+    credential: conf/secret.volume

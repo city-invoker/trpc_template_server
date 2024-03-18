@@ -33,16 +33,13 @@ namespace sample {
                              ::trpc::sample::TrpcQueryUserRsp* rsp) {
 
   TRPC_FMT_INFO("process start");
-  std::string wtf = "wtflalslfess";
-  TRPC_FMT_INFO(wtf.c_str());
-  TRPC_FMT_INFO(req->uid().c_str());
-  TRPC_FMT_INFO(req->session_id().c_str());
   TRPC_FMT_INFO("req info : uid={}", req->uid());
   TRPC_FMT_INFO("req info : session_id={}", req->session_id());
-  std::string x = "asdfsksfjsa";
-  TRPC_FMT_INFO("%s", x.c_str());
   TRPC_FMT_DEBUG("test debug log info");
   TRPC_FMT_ERROR("error, something goes wrong");
+
+  TRPC_FMT_INFO("test config:{}", app_busi_conf->GetString("config.appid", ""));
+  TRPC_FMT_INFO("test config:{}", app_db_conf->GetString("config.master.user", ""));
 
   rsp->set_uid("085815c18507a3eec90559d63042298a");
   rsp->set_session_id("e90d02d68103c2d966751ed7d45e1015e3d8de5d");

@@ -80,22 +80,28 @@ server:
 plugins:
   log:
     default:
-      - name: default
-        min_level: 1
-        mode: 1
-        format: "|%Y-%m-%d %T.%e|%-5!l|%P|%t|%q|%s:%#|%v"
-        sinks:
-          local_file:
-            roll_type: by_size
-            eol: true
-            filename: logs/trpc_template_server_app.log 
-            format: "|%Y-%m-%d %T.%e|%-5!l|%P|%t|%q|%s:%#|%v"
-            roll_size: 268435456 
-            reserve_count: 10
-            rotation_hour: 0
-            rotation_minute: 0
-            remove_timeout_file_switch: false
-
+    - name: default
+      min_level: 1
+      mode: 1
+      format: "|%Y-%m-%d %T.%e|%-5!l|%P|%t|%q|%s:%#|%v"
+      sinks:
+        local_file:
+          roll_type: by_size
+          eol: true
+          filename: ../logs/trpc_template_server_app.log 
+          format: "|%Y-%m-%d %T.%e|%-5!l|%P|%t|%q|%s:%#|%v"
+          roll_size: 268435456 
+          reserve_count: 10
+          rotation_hour: 0
+          rotation_minute: 0
+          remove_timeout_file_switch: false
+  config:
+    local_file:
+      providers:
+      - name: app_busi_conf
+        filename: conf/app_busi_conf.yaml
+      - name: app_db_conf
+        filename: conf/app_db_conf.yaml
 
 
 
